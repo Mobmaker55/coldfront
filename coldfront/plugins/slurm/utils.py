@@ -11,11 +11,11 @@ SLURM_ACCOUNT_ATTRIBUTE_NAME = import_from_settings('SLURM_ACCOUNT_ATTRIBUTE_NAM
 SLURM_SPECS_ATTRIBUTE_NAME = import_from_settings('SLURM_SPECS_ATTRIBUTE_NAME', 'slurm_specs')
 SLURM_USER_SPECS_ATTRIBUTE_NAME = import_from_settings('SLURM_USER_SPECS_ATTRIBUTE_NAME', 'slurm_user_specs')
 SLURM_SACCTMGR_PATH = import_from_settings('SLURM_SACCTMGR_PATH', '/usr/bin/sacctmgr')
-SLURM_CMD_REMOVE_USER = SLURM_SACCTMGR_PATH + ' -Q -i delete user where name={} cluster={} account={}'
+SLURM_CMD_REMOVE_USER_FROM_ACCOUNT = SLURM_SACCTMGR_PATH + ' -Q -i delete user where name={} cluster={} account={}'
 SLURM_CMD_REMOVE_QOS = SLURM_SACCTMGR_PATH + ' -Q -i modify user where name={} cluster={} account={} set {}'
 SLURM_CMD_REMOVE_ACCOUNT = SLURM_SACCTMGR_PATH + ' -Q -i delete account where name={} cluster={}'
 SLURM_CMD_ADD_ACCOUNT = SLURM_SACCTMGR_PATH + ' -Q -i create account name={} cluster={}'
-SLURM_CMD_ADD_USER = SLURM_SACCTMGR_PATH + ' -Q -i create user name={} cluster={} account={}'
+SLURM_CMD_ADD_USER_TO_ACCOUNT = SLURM_SACCTMGR_PATH + ' -Q -i create user name={} cluster={} account={}'
 SLURM_CMD_CHECK_ASSOCIATION = SLURM_SACCTMGR_PATH + ' list associations User={} Cluster={} Account={} Format=Cluster,Account,User,QOS -P'
 SLURM_CMD_LIST_ACCOUNTS = SLURM_SACCTMGR_PATH + ' list associations User={} Format=Account -Pn'
 SLURM_CMD_CHECK_DEFAULT_ACCOUNT = SLURM_SACCTMGR_PATH + ' show user User={} Format=DefaultAccount -Pn'
@@ -85,7 +85,7 @@ def slurm_remove_assoc(user, cluster, account, noop=False):
     
     
 def _remove_assoc(user, cluster, account, noop=False):
-    cmd = SLURM_CMD_REMOVE_USER.format(shlex.quote(user), shlex.quote(cluster), shlex.quote(account))
+    cmd = SLURM_CMD_REMOVE_USER_FROM_ACCOUNT.format(shlex.quote(user), shlex.quote(cluster), shlex.quote(account))
     _run_slurm_cmd(cmd, noop=noop)
 
 def slurm_remove_qos(user, cluster, account, qos, noop=False):
@@ -99,7 +99,7 @@ def slurm_remove_account(cluster, account, noop=False):
 def slurm_add_assoc(user, cluster, account, specs=None, noop=False):
     if specs is None:
         specs = []
-    cmd = SLURM_CMD_ADD_USER.format(shlex.quote(user), shlex.quote(cluster), shlex.quote(account))
+    cmd = SLURM_CMD_ADD_USER_TO_ACCOUNT.format(shlex.quote(user), shlex.quote(cluster), shlex.quote(account))
     if len(specs) > 0:
         cmd += ' ' + ' '.join(specs)
     _run_slurm_cmd(cmd, noop=noop)
